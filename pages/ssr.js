@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import Link from 'next/link';
 
-export default function Home() {
+const Page = ({ data }) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -13,11 +13,22 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <div
+          style={{
+            background: '#000',
+            color: '#FFF',
+            width: '100%',
+            padding: '10rem 2rem',
+            marginBottom: '10rem',
+          }}
+        >
+          SSR at: {data.now}
+        </div>
         <section style={{ background: '#CCC', padding: '8px' }}>
           To{' '}
-          <Link href="/ssr">
+          <Link href="/">
             <a style={{ color: 'blue', textDecoration: 'underline' }}>
-              SSR Page
+              Static Home Page
             </a>
           </Link>
         </section>
@@ -37,4 +48,19 @@ export default function Home() {
       </footer>
     </div>
   );
+};
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const res = await fetch(
+    `https://nextjs-time-api.vercel-support.app/api/time`
+  );
+  const data = await res.json();
+
+  console.log({ data });
+
+  // Pass data to the page via props
+  return { props: { data } };
 }
+
+export default Page;
